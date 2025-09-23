@@ -1,0 +1,31 @@
+<html>
+<script src="https://s11g0--siigotrain.sandbox.my.site.com/lightning/lightning.out.js"></script>
+
+<div data-lightning-out="true"></div>
+
+<script>
+    const appName = "c:LeadExternal";
+    const componentName = "c:GoToLeadButton";
+    const lightningEndpoint = "https://s11g0--siigotrain.sandbox.my.site.com";
+    const targetElement = document.querySelector("[data-lightning-out]");
+    const componentAttribute = {
+                        leadId: "00QDv00000Oz1d7MAB"
+                    };
+
+        $Lightning.use(
+            appName,
+            function() {
+                $Lightning.createComponent(
+                    componentName,
+                    componentAttribute,
+                    targetElement,
+                    function(cmp) {
+                        console.log("Componente cargado correctamente");
+                    }
+                );
+            },
+            lightningEndpoint
+        );
+    </script>
+
+</html>
