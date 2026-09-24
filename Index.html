@@ -1,1 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Five9 Container Simulator</title>
+    <!-- Cargar librería de Lightning Out 2.0 -->
+    <script type="text/javascript" src="https://s11g0--core.sandbox.my.salesforce.com/lightning/lightning.out.latest/index.iife.prod.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background-color: #f4f6f9; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Five9 Agent Desktop Simulator</h1>
+        <div id="status">Verificando sesión...</div>
 
+        <!-- Contenedor del componente LWC -->
+        <lightning-out-application 
+            app-id="0xIdh00000067gL" 
+            components="c-demo-container" 
+            frontdoor-url="">
+        </lightning-out-application>
+
+        <c-demo-container></c-demo-container>
+    </div>
+
+    <script>
+        const CLIENT_ID = "3MVG9ZTfbiXSaZsyRHxdpp1shVnvpwS41SacqjV.5gAIJUWT85FJV84_eQHk_H0EN6NrmnAt393NIirLl2Kw_";
+        const SF_DOMAIN = "https://s11g0--core.sandbox.my.salesforce.com";
+        const REDIRECT_URI = window.location.origin + window.location.pathname.replace('index.html', '') + 'callback.html';
+
+        const accessToken = localStorage.getItem('sf_access_token');
+
+        if (!accessToken) {
+            document.getElementById('status').innerHTML = '<button onclick="login()">Iniciar sesión vía Salesforce (SSO)</button>';
+        } else {
+            document.getElementById('status').innerText = 'Sesión activa. Cargando componente LWC...';
+            initLightningOut(accessToken);
+        }
+
+        function login() {
+            // Generar parámetro PKCE básico / state
+            const authUrl = `${SF_DOMAIN}/services/oauth2/authorize?response_type=token&client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}`;
+            window.location.href = authUrl;
+        }
+
+        function initLightningOut(token) {
+            const frontdoorUrl = `${SF_DOMAIN}/secur/frontdoor.jsp?sid=${token}`;
+            const app = document.querySelector("lightning-out-application");
+            app.setAttribute("frontdoor-url", frontdoorUrl);
+
+            // Escuchar eventos enviados desde el LWC hacia la página host
+            const lwcComp = document.querySelector("c-demo-container");
+            if (lwcComp) {
+                lwcComp.addEventListener("five9event", (event) => {
+                    console.log("Mensaje recibido desde LWC:", event.detail);
+                    alert("Evento capturado en Five9: " + JSON.stringify(event.detail));
+                });
+            }
+        }
+    </script>
+</body>
+</html>
