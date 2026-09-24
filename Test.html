@@ -1,4 +1,23 @@
-<html>
-HOLA MUNDO
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Procesando Autenticación...</title>
+</head>
+<body>
+    <p>Autenticación completada. Redirigiendo...</p>
+    <script>
+        // Extraer access_token de los parámetros de la URL (#access_token=...)
+        const hashParams = new URLSearchParams(window.location.hash.substring(1));
+        const token = hashParams.get('access_token');
 
+        if (token) {
+            localStorage.setItem('sf_access_token', token);
+            // Redirigir de regreso al simulador principal
+            window.location.href = 'index.html';
+        } else {
+            document.body.innerText = 'Error al obtener el token de acceso.';
+        }
+    </script>
+</body>
 </html>
